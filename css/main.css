@@ -591,7 +591,6 @@ body {
 .slider-wrapper {
     position: relative;
     width: 100%;
-    max-width: 400px;
 }
 
 .scale-slider {
@@ -668,6 +667,7 @@ body {
     justify-content: space-between;
     margin-top: 8px;
     padding: 0;
+    width: 100%;
 }
 
 .slider-label {
