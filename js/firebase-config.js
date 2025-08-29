@@ -23,7 +23,8 @@ export const db = getFirestore(app);
 export const COLLECTIONS = {
     SUBMISSIONS: 'survey_submissions',
     ACTIVITY: 'survey_activity',
-    METADATA: 'survey_metadata'
+    METADATA: 'survey_metadata',
+    ADMIN: 'admin_users'
 };
 
 // Utility function to check Firebase connection

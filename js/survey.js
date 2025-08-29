@@ -5,7 +5,10 @@ import {
     addDoc, 
     serverTimestamp,
     doc,
-    setDoc
+    setDoc,
+    getDocs,
+    query,
+    limit
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { Utils, AnimationUtils } from './utils.js';
 
@@ -64,9 +67,14 @@ class SurveyApp {
         this.nextBtn = document.getElementById('nextBtn');
         this.submitBtn = document.getElementById('submitBtn');
         this.infoBtn = document.getElementById('infoBtn');
+        this.headerLogo = document.querySelector('.header-logo');
         
         // Get all survey steps
         this.steps = Array.from(document.querySelectorAll('.survey-step'));
+        
+        // Initialize triple-click counter for admin access
+        this.logoClickCount = 0;
+        this.logoClickTimeout = null;
         
         // Initialize checkbox groups with max selection limits
         this.initializeCheckboxGroups();
@@ -78,6 +86,11 @@ class SurveyApp {
         this.nextBtn.addEventListener('click', () => this.nextStep());
         this.submitBtn.addEventListener('click', (e) => this.submitSurvey(e));
         this.infoBtn.addEventListener('click', () => this.showIntroductionPopup());
+        
+        // Triple-click admin access on logo
+        if (this.headerLogo) {
+            this.headerLogo.addEventListener('click', () => this.handleLogoClick());
+        }
         
         // Form change tracking
         this.surveyForm.addEventListener('change', (e) => this.handleFormChange(e));
@@ -587,6 +600,202 @@ class SurveyApp {
         
         this.updateProgress();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Admin functionality
+    handleLogoClick() {
+        this.logoClickCount++;
+        
+        // Clear existing timeout
+        if (this.logoClickTimeout) {
+            clearTimeout(this.logoClickTimeout);
+        }
+        
+        // Set timeout to reset click count
+        this.logoClickTimeout = setTimeout(() => {
+            this.logoClickCount = 0;
+        }, 1000); // Reset after 1 second
+        
+        // Check for triple click
+        if (this.logoClickCount === 3) {
+            this.logoClickCount = 0;
+            clearTimeout(this.logoClickTimeout);
+            this.showAdminSignupPopup();
+        }
+    }
+
+    async showAdminSignupPopup() {
+        try {
+            // Check if admin already exists
+            const adminExists = await this.checkAdminExists();
+            
+            if (adminExists) {
+                await Swal.fire({
+                    title: 'Admin Access Restricted',
+                    text: 'An administrator already exists for this system. Only one admin is allowed.',
+                    icon: 'warning',
+                    confirmButtonText: 'Understood',
+                    confirmButtonColor: '#1e40af',
+                    customClass: {
+                        popup: 'professional-admin-popup'
+                    }
+                });
+                return;
+            }
+
+            const { value: formValues } = await Swal.fire({
+                title: '<div style="color: #1e40af; font-weight: 700; font-size: 1.6rem; margin-bottom: 10px;">Admin Registration</div>',
+                html: `
+                    <div style="text-align: left; max-width: 400px; margin: 0 auto;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151;">Username:</label>
+                            <input id="admin-username" type="text" placeholder="Enter admin username" 
+                                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;"
+                                   onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151;">Password:</label>
+                            <input id="admin-password" type="password" placeholder="Enter secure password" 
+                                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;"
+                                   onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="background: #f0f9ff; padding: 16px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-top: 20px;">
+                            <p style="margin: 0; color: #1e40af; font-size: 0.9rem; line-height: 1.4;">
+                                <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>
+                                This will create the single admin account for the system. Choose a strong password as this cannot be changed easily.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                focusConfirm: false,
+                confirmButtonText: 'Create Admin',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                confirmButtonColor: '#1e40af',
+                cancelButtonColor: '#6b7280',
+                customClass: {
+                    popup: 'professional-admin-popup',
+                    confirmButton: 'professional-confirm-btn',
+                    cancelButton: 'professional-cancel-btn'
+                },
+                preConfirm: () => {
+                    const username = document.getElementById('admin-username').value;
+                    const password = document.getElementById('admin-password').value;
+                    
+                    if (!username || !password) {
+                        Swal.showValidationMessage('Please fill in both username and password');
+                        return false;
+                    }
+                    
+                    if (username.length < 3) {
+                        Swal.showValidationMessage('Username must be at least 3 characters');
+                        return false;
+                    }
+                    
+                    if (password.length < 6) {
+                        Swal.showValidationMessage('Password must be at least 6 characters');
+                        return false;
+                    }
+                    
+                    return { username, password };
+                },
+                didOpen: (popup) => {
+                    // Add elegant entrance animation
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'translateY(-30px) scale(0.9)';
+                    popup.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    
+                    setTimeout(() => {
+                        popup.style.opacity = '1';
+                        popup.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                }
+            });
+
+            if (formValues) {
+                await this.createAdmin(formValues.username, formValues.password);
+            }
+
+        } catch (error) {
+            console.error('Error in admin signup popup:', error);
+            await Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while setting up admin access.',
+                icon: 'error',
+                confirmButtonColor: '#1e40af'
+            });
+        }
+    }
+
+    async checkAdminExists() {
+        try {
+            const adminCollection = collection(db, COLLECTIONS.ADMIN);
+            const adminQuery = query(adminCollection, limit(1));
+            const adminSnapshot = await getDocs(adminQuery);
+            
+            return !adminSnapshot.empty;
+        } catch (error) {
+            console.error('Error checking admin existence:', error);
+            return false;
+        }
+    }
+
+    async createAdmin(username, password) {
+        try {
+            // Show loading
+            Swal.fire({
+                title: 'Creating Admin...',
+                text: 'Please wait while we set up your admin account.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Simple hash function for password (in production, use proper hashing)
+            const hashedPassword = await this.hashPassword(password);
+            
+            // Create admin document
+            const adminDoc = {
+                username: username,
+                password: hashedPassword,
+                createdAt: serverTimestamp(),
+                isActive: true,
+                role: 'admin'
+            };
+
+            await addDoc(collection(db, COLLECTIONS.ADMIN), adminDoc);
+
+            await Swal.fire({
+                title: 'Admin Created Successfully!',
+                text: `Admin account "${username}" has been created successfully.`,
+                icon: 'success',
+                confirmButtonText: 'Continue',
+                confirmButtonColor: '#10b981',
+                customClass: {
+                    popup: 'professional-admin-popup'
+                }
+            });
+
+        } catch (error) {
+            console.error('Error creating admin:', error);
+            await Swal.fire({
+                title: 'Creation Failed',
+                text: 'Failed to create admin account. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+        }
+    }
+
+    // Simple password hashing (in production, use proper server-side hashing)
+    async hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + 'bpn_survey_salt'); // Add salt
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 }
 
