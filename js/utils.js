@@ -125,51 +125,69 @@ export class Utils {
         Swal.close();
     }
 
-    // Export data to CSV
+    // Export data to CSV (legacy function - kept for backward compatibility)
     static exportToCSV(data, filename = 'survey_data.csv') {
+        return this.exportToExcelCSV(data, filename);
+    }
+
+    // Enhanced export function optimized for Excel
+    static exportToExcelCSV(data, filename = 'survey_data.csv', headerMap = {}) {
         if (!data || data.length === 0) {
             this.showNotification('No data to export', 'warning');
             return;
         }
 
-        // Get all unique keys from the data
-        const headers = new Set();
+        // Get column headers in order (if defined) or all unique keys
+        const columnHeaders = Object.keys(data[0]);
+        
+        // Create human-readable headers
+        const readableHeaders = columnHeaders.map(key => headerMap[key] || this.getFriendlyFieldName(key));
+        
+        // Convert data to CSV format with proper Excel formatting
+        const csvRows = [];
+        
+        // Add header row
+        csvRows.push(readableHeaders.map(header => this.escapeCsvValue(header)).join(','));
+        
+        // Add data rows
         data.forEach(item => {
-            Object.keys(item).forEach(key => headers.add(key));
+            const row = columnHeaders.map(header => {
+                const value = item[header];
+                
+                if (value === null || value === undefined || value === '') {
+                    return '""'; // Empty quoted field for Excel
+                }
+                
+                // Handle arrays (already processed in admin.js)
+                if (Array.isArray(value)) {
+                    const joinedValue = value.join(' | ');
+                    return this.escapeCsvValue(joinedValue);
+                }
+                
+                // Handle objects (like timestamps - should already be processed)
+                if (typeof value === 'object') {
+                    if (value.toDate) {
+                        return this.escapeCsvValue(this.formatTimestamp(value));
+                    }
+                    return this.escapeCsvValue(JSON.stringify(value));
+                }
+                
+                // Handle strings and numbers
+                return this.escapeCsvValue(String(value));
+            });
+            
+            csvRows.push(row.join(','));
         });
 
-        const csvHeaders = Array.from(headers);
+        // Create CSV content with UTF-8 BOM for Excel compatibility
+        const BOM = '\uFEFF'; // UTF-8 BOM
+        const csvContent = BOM + csvRows.join('\r\n'); // Use Windows line endings for Excel
         
-        // Convert data to CSV format
-        const csvContent = [
-            csvHeaders.join(','), // Header row
-            ...data.map(item => 
-                csvHeaders.map(header => {
-                    const value = item[header];
-                    if (value === null || value === undefined) return '';
-                    
-                    // Handle arrays
-                    if (Array.isArray(value)) {
-                        return `"${value.join('; ')}"`;
-                    }
-                    
-                    // Handle objects (like timestamps)
-                    if (typeof value === 'object') {
-                        if (value.toDate) {
-                            return `"${this.formatTimestamp(value)}"`;
-                        }
-                        return `"${JSON.stringify(value)}"`;
-                    }
-                    
-                    // Escape quotes and wrap in quotes if contains comma
-                    const stringValue = String(value).replace(/"/g, '""');
-                    return stringValue.includes(',') ? `"${stringValue}"` : stringValue;
-                }).join(',')
-            )
-        ].join('\n');
-
-        // Create and download file
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // Create and download file with proper MIME type for Excel
+        const blob = new Blob([csvContent], { 
+            type: 'text/csv;charset=utf-8;' 
+        });
+        
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         
@@ -181,7 +199,36 @@ export class Utils {
         link.click();
         document.body.removeChild(link);
         
-        this.showNotification('Data exported successfully', 'success');
+        // Clean up object URL
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        
+        this.showNotification(`Successfully exported ${data.length} records to ${filename}`, 'success');
+    }
+
+    // Helper function to properly escape CSV values for Excel
+    static escapeCsvValue(value) {
+        if (value === null || value === undefined) {
+            return '""';
+        }
+        
+        const stringValue = String(value);
+        
+        // Always quote if the value contains special characters
+        if (stringValue.includes(',') || 
+            stringValue.includes('"') || 
+            stringValue.includes('\n') || 
+            stringValue.includes('\r') ||
+            stringValue.includes('|')) {
+            // Escape quotes by doubling them and wrap in quotes
+            return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        
+        // For numeric-looking values, quote them to preserve formatting
+        if (/^\d+$/.test(stringValue) && stringValue.length > 10) {
+            return `"${stringValue}"`;
+        }
+        
+        return stringValue;
     }
 
     // Calculate completion percentage

@@ -561,30 +561,81 @@ class AdminDashboard {
             return;
         }
         
-        // Prepare data for export
+        Utils.showLoading('Preparing export data...');
+        
+        // Define the column order for logical organization
+        const columnOrder = [
+            'submittedAt', 'completionTime', 'interest',
+            'financial_proposals', 'cash_flow', 'insurance', 'record_keeping', 'cooperative',
+            'quality_standards', 'supply_chain', 'leadership_training', 'other_training',
+            'market_obstacle', 'collab_marketing', 'collab_purchasing', 'collab_supply_chain',
+            'collab_transport', 'collab_information', 'export_support', 'yean_activities',
+            'market_info_source', 'ideal_customer', 'technical_coaching',
+            'livestock_challenge', 'crop_challenge', 'processing_challenge',
+            'confidence_pests', 'confidence_weather', 'confidence_postharvest',
+            'confidence_equipment', 'confidence_contamination', 'biggest_challenge',
+            'climate_practices', 'innovation_barrier', 'business_model',
+            'yean_innovation_support', 'sustainability_concern', 'innovative_idea',
+            'session_feedback'
+        ];
+        
+        // Process and clean data for export
         const exportData = this.submissions.map(submission => {
-            const exportSubmission = { ...submission };
+            const cleanSubmission = this.cleanSubmissionData(submission);
+            const exportSubmission = {};
             
-            // Format timestamp for CSV
-            if (exportSubmission.submittedAt) {
-                exportSubmission.submittedAt = Utils.formatTimestamp(exportSubmission.submittedAt);
-            }
-            
-            // Format completion time
-            if (exportSubmission.completionTime) {
-                exportSubmission.completionTime = Utils.formatDuration(exportSubmission.completionTime);
-            }
-            
-            // Remove system fields
-            delete exportSubmission.id;
-            delete exportSubmission.userAgent;
-            delete exportSubmission.screenResolution;
+            // Process columns in defined order
+            columnOrder.forEach(field => {
+                if (cleanSubmission.hasOwnProperty(field)) {
+                    const value = cleanSubmission[field];
+                    
+                    // Handle different field types appropriately
+                    if (field === 'submittedAt') {
+                        exportSubmission[field] = Utils.formatTimestamp(value);
+                    } else if (field === 'completionTime') {
+                        exportSubmission[field] = Utils.formatDuration(value);
+                    } else if (Array.isArray(value)) {
+                        // Clean array values and join them properly
+                        const cleanArray = [...new Set(value.filter(v => v && v.trim() !== ''))];
+                        exportSubmission[field] = cleanArray.length > 0 ? cleanArray.join(' | ') : 'N/A';
+                    } else if (field.includes('confidence_') || field.includes('collab_')) {
+                        // Handle rating scales
+                        if (['1', '2', '3', '4', '5'].includes(String(value))) {
+                            const scaleLabels = {
+                                '1': '1 - Very Low/Not Confident',
+                                '2': '2 - Low/Somewhat Confident', 
+                                '3': '3 - Medium/Moderately Confident',
+                                '4': '4 - High/Confident',
+                                '5': '5 - Very High/Very Confident'
+                            };
+                            exportSubmission[field] = scaleLabels[value] || value;
+                        } else {
+                            exportSubmission[field] = value || 'N/A';
+                        }
+                    } else {
+                        // Apply friendly formatting for other fields
+                        exportSubmission[field] = Utils.getFriendlyOptionValue(field, value);
+                    }
+                } else {
+                    exportSubmission[field] = 'N/A';
+                }
+            });
             
             return exportSubmission;
         });
         
-        const filename = `survey_submissions_${new Date().toISOString().split('T')[0]}.csv`;
-        Utils.exportToCSV(exportData, filename);
+        // Create human-readable headers mapping
+        const headerMap = {};
+        columnOrder.forEach(field => {
+            headerMap[field] = Utils.getFriendlyFieldName(field);
+        });
+        
+        const filename = `YEAN_Survey_Export_${new Date().toISOString().split('T')[0]}.csv`;
+        
+        setTimeout(() => {
+            Utils.exportToExcelCSV(exportData, filename, headerMap);
+            Utils.hideLoading();
+        }, 500);
     }
 
     viewAllSubmissions() {
