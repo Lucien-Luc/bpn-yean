@@ -8,7 +8,8 @@ import {
     setDoc,
     getDocs,
     query,
-    limit
+    limit,
+    where
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { Utils, AnimationUtils } from './utils.js';
 
@@ -630,16 +631,8 @@ class SurveyApp {
             const adminExists = await this.checkAdminExists();
             
             if (adminExists) {
-                await Swal.fire({
-                    title: 'Admin Access Restricted',
-                    text: 'An administrator already exists for this system. Only one admin is allowed.',
-                    icon: 'warning',
-                    confirmButtonText: 'Understood',
-                    confirmButtonColor: '#1e40af',
-                    customClass: {
-                        popup: 'professional-admin-popup'
-                    }
-                });
+                // Show login popup instead of refusal
+                await this.showAdminLoginPopup();
                 return;
             }
 
@@ -786,6 +779,157 @@ class SurveyApp {
                 icon: 'error',
                 confirmButtonColor: '#ef4444'
             });
+        }
+    }
+
+    async showAdminLoginPopup() {
+        try {
+            const { value: loginValues } = await Swal.fire({
+                title: '<div style="color: #1e40af; font-weight: 700; font-size: 1.6rem; margin-bottom: 10px;">Admin Sign In</div>',
+                html: `
+                    <div style="text-align: left; max-width: 400px; margin: 0 auto;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151;">Username:</label>
+                            <input id="login-username" type="text" placeholder="Enter your username" 
+                                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;"
+                                   onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151;">Password:</label>
+                            <input id="login-password" type="password" placeholder="Enter your password" 
+                                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;"
+                                   onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="background: #f0f9ff; padding: 16px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-top: 20px;">
+                            <p style="margin: 0; color: #1e40af; font-size: 0.9rem; line-height: 1.4;">
+                                <i class="fas fa-key" style="margin-right: 6px;"></i>
+                                Sign in to access the admin dashboard and view survey submissions.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                focusConfirm: false,
+                confirmButtonText: 'Sign In',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                confirmButtonColor: '#1e40af',
+                cancelButtonColor: '#6b7280',
+                customClass: {
+                    popup: 'professional-admin-popup',
+                    confirmButton: 'professional-confirm-btn',
+                    cancelButton: 'professional-cancel-btn'
+                },
+                preConfirm: () => {
+                    const username = document.getElementById('login-username').value;
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!username || !password) {
+                        Swal.showValidationMessage('Please enter both username and password');
+                        return false;
+                    }
+                    
+                    return { username, password };
+                },
+                didOpen: (popup) => {
+                    // Add elegant entrance animation
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'translateY(-30px) scale(0.9)';
+                    popup.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    
+                    setTimeout(() => {
+                        popup.style.opacity = '1';
+                        popup.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                    
+                    // Focus on username field
+                    setTimeout(() => {
+                        document.getElementById('login-username').focus();
+                    }, 100);
+                }
+            });
+
+            if (loginValues) {
+                await this.validateAdminLogin(loginValues.username, loginValues.password);
+            }
+
+        } catch (error) {
+            console.error('Error in admin login popup:', error);
+            await Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while attempting to sign in.',
+                icon: 'error',
+                confirmButtonColor: '#1e40af'
+            });
+        }
+    }
+
+    async validateAdminLogin(username, password) {
+        try {
+            // Show loading
+            Swal.fire({
+                title: 'Signing In...',
+                text: 'Please wait while we verify your credentials.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Hash the provided password
+            const hashedPassword = await this.hashPassword(password);
+            
+            // Query for admin with matching username
+            const adminCollection = collection(db, COLLECTIONS.ADMIN);
+            const adminQuery = query(
+                adminCollection, 
+                where('username', '==', username),
+                where('password', '==', hashedPassword),
+                where('isActive', '==', true)
+            );
+            
+            const adminSnapshot = await getDocs(adminQuery);
+
+            if (adminSnapshot.empty) {
+                await Swal.fire({
+                    title: 'Login Failed',
+                    text: 'Invalid username or password. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+                return false;
+            }
+
+            // Successful login
+            await Swal.fire({
+                title: 'Login Successful!',
+                text: 'Welcome back! Redirecting to admin dashboard...',
+                icon: 'success',
+                confirmButtonText: 'Continue',
+                confirmButtonColor: '#10b981',
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'professional-admin-popup'
+                }
+            });
+
+            // Redirect to admin dashboard
+            setTimeout(() => {
+                window.location.href = '/admin.html';
+            }, 2000);
+
+            return true;
+
+        } catch (error) {
+            console.error('Error validating admin login:', error);
+            await Swal.fire({
+                title: 'Login Error',
+                text: 'An error occurred during login. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+            return false;
         }
     }
 
