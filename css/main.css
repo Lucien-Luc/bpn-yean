@@ -273,12 +273,15 @@ body {
 }
 
 .section-description::before {
-    content: '📝';
+    content: '\f05a';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
     right: 20px;
     top: 18px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     opacity: 0.6;
+    color: var(--secondary-blue);
 }
 
 /* Question Groups */
@@ -318,11 +321,13 @@ body {
 }
 
 .question-label::before {
-    content: '❓';
+    content: '\f059';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
     left: 0;
     top: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--secondary-blue);
 }
 
@@ -567,11 +572,14 @@ body {
 }
 
 .scale-label::before {
-    content: '📊';
+    content: '\f201';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
     left: 0;
     top: 0;
     font-size: 1.1rem;
+    color: var(--light-blue);
 }
 
 .scale-slider-container {
