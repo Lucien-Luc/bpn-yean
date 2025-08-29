@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Admin Dashboard - BPN Agriculture Survey</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <h1><i class="fas fa-chart-line"></i> Survey Admin Dashboard</h1>
+            <div class="header-actions">
+                <button id="refreshBtn" class="action-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <a href="index.html" class="action-btn">
+                    <i class="fas fa-external-link-alt"></i> View Survey
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Overview -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalSubmissions">0</h3>
+                    <p>Total Submissions</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="todaySubmissions">0</h3>
+                    <p>Today's Submissions</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="completionRate">0%</h3>
+                    <p>Completion Rate</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="avgTime">0 min</h3>
+                    <p>Avg. Completion Time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-section">
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Daily Submissions</h3>
+                <canvas id="dailyChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Interest Distribution</h3>
+                <canvas id="interestChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Training Priorities</h3>
+                <canvas id="trainingChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Market Obstacles</h3>
+                <canvas id="marketChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Activity Feed -->
+    <section class="activity-section">
+        <div class="activity-header">
+            <h3><i class="fas fa-bell"></i> Real-time Activity</h3>
+            <div class="activity-status">
+                <span id="connectionStatus" class="status-indicator">
+                    <i class="fas fa-circle"></i> Connected
+                </span>
+            </div>
+        </div>
+        <div id="activityFeed" class="activity-feed">
+            <div class="activity-item placeholder">
+                <i class="fas fa-info-circle"></i>
+                <span>Waiting for activity...</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Submissions Table -->
+    <section class="submissions-section">
+        <div class="submissions-header">
+            <h3><i class="fas fa-table"></i> Recent Submissions</h3>
+            <div class="table-actions">
+                <button id="exportBtn" class="action-btn">
+                    <i class="fas fa-download"></i> Export CSV
+                </button>
+                <button id="viewAllBtn" class="action-btn">
+                    <i class="fas fa-eye"></i> View All
+                </button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table id="submissionsTable" class="submissions-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Interest</th>
+                        <th>Market Obstacle</th>
+                        <th>Innovation Barrier</th>
+                        <th>Completion Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="submissionsTableBody">
+                    <tr class="no-data">
+                        <td colspan="6">No submissions yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Detailed View Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Submission Details</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <!-- Content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

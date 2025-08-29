@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPN Agriculture Survey - YEAN Partnership</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader">
+            <div class="loader-circle"></div>
+            <p>Loading Survey...</p>
+        </div>
+    </div>
+
+    <!-- Survey Container -->
+    <div id="surveyContainer" class="survey-container" style="display: none;">
+        <!-- Header -->
+        <header class="survey-header" data-aos="fade-down">
+            <div class="header-content">
+                <h1><i class="fas fa-seedling"></i> BPN Agriculture Survey</h1>
+                <p>In partnership with YEAN & Mastercard Foundation</p>
+                <button id="infoBtn" class="info-btn" title="View Introduction">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" data-aos="fade-in">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="progress-info">
+                <span id="progressText">Getting Started</span>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <!-- Survey Form -->
+        <form id="surveyForm" class="survey-form">
+            <!-- Initial Interest Question -->
+            <div id="step0" class="survey-step active" data-aos="fade-up">
+                <div class="question-card">
+                    <h2>Your Interest in Agriculture Support</h2>
+                    <div class="question-group">
+                        <label class="question-label">Would you be interested in receiving agriculture sector-specific support tailored to your business needs?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="yes" required>
+                                <span class="radio-custom"></span>
+                                <span>Yes</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="no" required>
+                                <span class="radio-custom"></span>
+                                <span>No</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="interest" value="not_sure" required>
+                                <span class="radio-custom"></span>
+                                <span>Not sure yet</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 1: Training Needs - Financial Areas -->
+            <div id="step1" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-graduation-cap"></i> Training Needs</h2>
+                    <p class="section-description">This section helps us understand the specific knowledge and skills you want to acquire.</p>
+                    
+                    <div class="question-group">
+                        <label class="question-label">On a scale of 1 (low priority) to 5 (high priority), please rate your need for training in the following financial areas specific to agriculture:</label>
+                        
+                        <div class="scale-questions">
+                            <div class="scale-question">
+                                <span class="scale-label">Developing financial proposals for asset financing (e.g., machinery, equipment).</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="financial_proposals" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="financial_proposals" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="financial_proposals" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="financial_proposals" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="financial_proposals" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Managing cash flow in a business with seasonal income and volatile input costs.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="cash_flow" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="cash_flow" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="cash_flow" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="cash_flow" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="cash_flow" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Understanding and accessing agricultural insurance products.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="insurance" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="insurance" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="insurance" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="insurance" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="insurance" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Record-keeping and financial reporting for agricultural enterprises.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="record_keeping" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="record_keeping" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="record_keeping" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="record_keeping" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="record_keeping" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Cooperative formation and financial management for bulk purchasing.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="cooperative" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="cooperative" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="cooperative" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="cooperative" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="cooperative" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Quality & Certification Standards -->
+            <div id="step2" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">Which of these quality and certification standards is most critical for your business growth right now? (Please select up to two)</label>
+                        <div class="checkbox-group" data-max-selections="2">
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="quality_standards" value="haccp">
+                                <span class="checkbox-custom"></span>
+                                <span>HACCP for food safety in processing.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="quality_standards" value="global_gap">
+                                <span class="checkbox-custom"></span>
+                                <span>Global GAP for accessing export markets.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="quality_standards" value="rwandan_standards">
+                                <span class="checkbox-custom"></span>
+                                <span>Rwandan standards (RSB) for formal domestic markets.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="quality_standards" value="fairtrade">
+                                <span class="checkbox-custom"></span>
+                                <span>Fairtrade or organic certification.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="quality_standards" value="internal_quality">
+                                <span class="checkbox-custom"></span>
+                                <span>Internal quality control systems for raw material sourcing.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Supply Chain & Leadership Training -->
+            <div id="step3" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">To improve your supply chain, which area of the technical assistance would be most valuable with YEAN?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="supply_chain" value="contracts" required>
+                                <span class="radio-custom"></span>
+                                <span>Negotiating fair and reliable contracts with farmers or suppliers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="supply_chain" value="traceability" required>
+                                <span class="radio-custom"></span>
+                                <span>Implementing systems to trace products from farm to market.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="supply_chain" value="logistics" required>
+                                <span class="radio-custom"></span>
+                                <span>Managing logistics for timely delivery and collection of goods.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="supply_chain" value="network" required>
+                                <span class="radio-custom"></span>
+                                <span>Building and managing a network of out-growers or suppliers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="supply_chain" value="forecasting" required>
+                                <span class="radio-custom"></span>
+                                <span>Forecasting demand to better plan purchasing and production.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">Which specialized training would most effectively support your leadership and growth?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="leadership_training" value="negotiation" required>
+                                <span class="radio-custom"></span>
+                                <span>Advanced negotiation skills for dealing with buyers and suppliers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="leadership_training" value="confidence" required>
+                                <span class="radio-custom"></span>
+                                <span>Building confidence and networks in a male-dominated sector.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="leadership_training" value="finance_access" required>
+                                <span class="radio-custom"></span>
+                                <span>Strategies for accessing finance and investment opportunities available to women.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="leadership_training" value="balance" required>
+                                <span class="radio-custom"></span>
+                                <span>Balancing business management with social and family responsibilities.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="leadership_training" value="mentorship" required>
+                                <span class="radio-custom"></span>
+                                <span>Mentorship from other successful women in agribusiness.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">Is there any other specific training you believe is critical for your success that was not mentioned above? Please describe.</label>
+                        <textarea name="other_training" placeholder="Please describe any additional training needs..." rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Market Access -->
+            <div id="step4" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-store"></i> Market Access</h2>
+                    <p class="section-description">This section is about the challenges you face in selling your products and how we can help.</p>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What is the single biggest obstacle preventing you from accessing higher-value markets?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="market_obstacle" value="connections" required>
+                                <span class="radio-custom"></span>
+                                <span>Lack of connections to the right buyers (exporters, hotels, supermarkets).</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_obstacle" value="quality_volume" required>
+                                <span class="radio-custom"></span>
+                                <span>Inability to consistently meet the quality or volume requirements of large buyers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_obstacle" value="transport_cost" required>
+                                <span class="radio-custom"></span>
+                                <span>High cost of transportation and logistics.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_obstacle" value="competition" required>
+                                <span class="radio-custom"></span>
+                                <span>Competition from imported or more established products.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_obstacle" value="branding" required>
+                                <span class="radio-custom"></span>
+                                <span>Insufficient branding, packaging, and marketing for my products.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Collaboration & Export Interest -->
+            <div id="step5" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">How interested are you in collaborating with other BPN entrepreneurs to improve market access? (1 = Not interested, 5 = Very interested)</label>
+                        
+                        <div class="scale-questions">
+                            <div class="scale-question">
+                                <span class="scale-label">Forming a network for joint marketing and sales.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="collab_marketing" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="collab_marketing" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="collab_marketing" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="collab_marketing" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="collab_marketing" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Bulk purchasing of inputs to lower costs.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="collab_purchasing" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="collab_purchasing" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="collab_purchasing" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="collab_purchasing" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="collab_purchasing" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Creating a formal supply chain link (e.g., producers selling to processors within the group).</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="collab_supply_chain" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="collab_supply_chain" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="collab_supply_chain" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="collab_supply_chain" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="collab_supply_chain" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Sharing transportation to reduce costs.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="collab_transport" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="collab_transport" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="collab_transport" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="collab_transport" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="collab_transport" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Sharing market information and contacts.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="collab_information" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="collab_information" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="collab_information" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="collab_information" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="collab_information" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">If you are interested in exporting, what is your most immediate need for support?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="export_support" value="requirements" required>
+                                <span class="radio-custom"></span>
+                                <span>Understanding the specific requirements (certifications, documentation) for target countries.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="export_support" value="buyers" required>
+                                <span class="radio-custom"></span>
+                                <span>Finding and connecting with international buyers or brokers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="export_support" value="packaging" required>
+                                <span class="radio-custom"></span>
+                                <span>Developing export-ready packaging and branding.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="export_support" value="financing" required>
+                                <span class="radio-custom"></span>
+                                <span>Securing financing for an export order.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="export_support" value="not_interested" required>
+                                <span class="radio-custom"></span>
+                                <span>I am not currently interested in exporting.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: YEAN Activities & Market Information -->
+            <div id="step6" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">Which of these activities would be most helpful for YEAN to facilitate?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="yean_activities" value="matchmaking" required>
+                                <span class="radio-custom"></span>
+                                <span>Organized B2B matchmaking events with potential buyers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_activities" value="coaching" required>
+                                <span class="radio-custom"></span>
+                                <span>Coaching on how to develop a professional sales pitch and marketing materials.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_activities" value="logistics" required>
+                                <span class="radio-custom"></span>
+                                <span>Introductions to reliable transport and logistics providers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_activities" value="trade_fairs" required>
+                                <span class="radio-custom"></span>
+                                <span>Support to participate in local or international trade fairs.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">How do you currently get information about market prices and demand?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="market_info_source" value="local_traders" required>
+                                <span class="radio-custom"></span>
+                                <span>From other farmers or traders in my local market.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_info_source" value="digital_platform" required>
+                                <span class="radio-custom"></span>
+                                <span>Through a digital platform or mobile app.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_info_source" value="buyers" required>
+                                <span class="radio-custom"></span>
+                                <span>Directly from my current buyers.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_info_source" value="media" required>
+                                <span class="radio-custom"></span>
+                                <span>Radio or other media.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="market_info_source" value="struggle" required>
+                                <span class="radio-custom"></span>
+                                <span>I struggle to find reliable and timely market information.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">In your own words, please describe your ideal customer or market and what you think is preventing you from reaching them.</label>
+                        <textarea name="ideal_customer" placeholder="Please describe your ideal customer or market..." rows="4" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Individual Technical Support -->
+            <div id="step7" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-tools"></i> Individual Technical Support</h2>
+                    <p class="section-description">This section helps us understand the specific, hands-on help you need at your farm or facility.</p>
+                    
+                    <div class="question-group">
+                        <label class="question-label">If a YEAN expert could provide one-on-one coaching at your business, which area would create the most immediate impact on your productivity?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="technical_coaching" value="health_management" required>
+                                <span class="radio-custom"></span>
+                                <span>Improving crop/livestock health and disease management protocols.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="technical_coaching" value="input_optimization" required>
+                                <span class="radio-custom"></span>
+                                <span>Optimizing the use of inputs (fertilizer, water, feed) to reduce costs.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="technical_coaching" value="post_harvest" required>
+                                <span class="radio-custom"></span>
+                                <span>Implementing better post-harvest handling and storage techniques.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="technical_coaching" value="processing_efficiency" required>
+                                <span class="radio-custom"></span>
+                                <span>Improving the efficiency of my processing workflow.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="technical_coaching" value="infrastructure" required>
+                                <span class="radio-custom"></span>
+                                <span>Guidance on farm layout and infrastructure development.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 8: Livestock & Crop Challenges -->
+            <div id="step8" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">For livestock producers (poultry, pigs, goats): What is your most pressing technical challenge?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="feed_cost" required>
+                                <span class="radio-custom"></span>
+                                <span>High cost and inconsistent quality of animal feed.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="disease_management" required>
+                                <span class="radio-custom"></span>
+                                <span>Preventing and managing common diseases and pests.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="breeding" required>
+                                <span class="radio-custom"></span>
+                                <span>Improving animal breeding and genetics.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="veterinary_access" required>
+                                <span class="radio-custom"></span>
+                                <span>Access to reliable veterinary services and medicines.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="waste_management" required>
+                                <span class="radio-custom"></span>
+                                <span>Waste management and biosecurity on the farm.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="livestock_challenge" value="not_applicable" required>
+                                <span class="radio-custom"></span>
+                                <span>Not applicable - I am not a livestock producer.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">For crop producers (horticulture, primary inputs): What is your most pressing technical challenge?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="soil_health" required>
+                                <span class="radio-custom"></span>
+                                <span>Managing soil health and fertility.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="pest_control" required>
+                                <span class="radio-custom"></span>
+                                <span>Controlling pests and diseases with cost-effective methods (IPM).</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="seed_access" required>
+                                <span class="radio-custom"></span>
+                                <span>Accessing high-quality, certified seeds or seedlings.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="irrigation" required>
+                                <span class="radio-custom"></span>
+                                <span>Implementing efficient irrigation and water management systems.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="harvest_timing" required>
+                                <span class="radio-custom"></span>
+                                <span>Knowing the optimal time for harvesting and post-harvest handling.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="crop_challenge" value="not_applicable" required>
+                                <span class="radio-custom"></span>
+                                <span>Not applicable - I am not a crop producer.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">For agri-processors (value addition): What is your most pressing technical challenge?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="raw_material_supply" required>
+                                <span class="radio-custom"></span>
+                                <span>Ensuring a consistent supply of high-quality raw materials.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="product_quality" required>
+                                <span class="radio-custom"></span>
+                                <span>Improving product quality, consistency, and shelf life.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="food_safety" required>
+                                <span class="radio-custom"></span>
+                                <span>Meeting food safety standards in my facility.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="equipment_maintenance" required>
+                                <span class="radio-custom"></span>
+                                <span>Operating and maintaining processing equipment efficiently.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="product_development" required>
+                                <span class="radio-custom"></span>
+                                <span>Developing new, innovative products.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="processing_challenge" value="not_applicable" required>
+                                <span class="radio-custom"></span>
+                                <span>Not applicable - I am not an agri-processor.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 9: Technical Risk Confidence -->
+            <div id="step9" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">How confident are you in your ability to manage the following technical risks? (1=Not confident, 5=Very confident)</label>
+                        
+                        <div class="scale-questions">
+                            <div class="scale-question">
+                                <span class="scale-label">Losses from pests and diseases.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="confidence_pests" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="confidence_pests" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="confidence_pests" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="confidence_pests" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="confidence_pests" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Losses due to extreme weather events (drought, floods).</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="confidence_weather" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="confidence_weather" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="confidence_weather" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="confidence_weather" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="confidence_weather" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Post-harvest losses during storage or transport.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="confidence_postharvest" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="confidence_postharvest" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="confidence_postharvest" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="confidence_postharvest" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="confidence_postharvest" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Equipment breakdown during critical periods.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="confidence_equipment" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="confidence_equipment" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="confidence_equipment" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="confidence_equipment" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="confidence_equipment" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+
+                            <div class="scale-question">
+                                <span class="scale-label">Contamination or food safety issues.</span>
+                                <div class="scale-options">
+                                    <label><input type="radio" name="confidence_contamination" value="1" required><span>1</span></label>
+                                    <label><input type="radio" name="confidence_contamination" value="2" required><span>2</span></label>
+                                    <label><input type="radio" name="confidence_contamination" value="3" required><span>3</span></label>
+                                    <label><input type="radio" name="confidence_contamination" value="4" required><span>4</span></label>
+                                    <label><input type="radio" name="confidence_contamination" value="5" required><span>5</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">Please describe the single biggest technical or operational challenge you face in your day-to-day business.</label>
+                        <textarea name="biggest_challenge" placeholder="Please describe your biggest challenge..." rows="4" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 10: Sustainability & Innovation -->
+            <div id="step10" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-leaf"></i> Sustainability & Innovation</h2>
+                    <p class="section-description">This section explores how we can help you build a more resilient and forward-looking business.</p>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Which of these climate-smart practices are you most interested in adopting? (Select up to two)</label>
+                        <div class="checkbox-group" data-max-selections="2">
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="climate_practices" value="water_conservation">
+                                <span class="checkbox-custom"></span>
+                                <span>Water conservation and efficient irrigation techniques.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="climate_practices" value="soil_conservation">
+                                <span class="checkbox-custom"></span>
+                                <span>Soil conservation and improvement methods (e.g., cover crops, composting).</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="climate_practices" value="agroforestry">
+                                <span class="checkbox-custom"></span>
+                                <span>Agroforestry or integrating trees on your farm.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="climate_practices" value="diversification">
+                                <span class="checkbox-custom"></span>
+                                <span>Diversifying my crops or income streams to reduce climate risk.</span>
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="climate_practices" value="renewable_energy">
+                                <span class="checkbox-custom"></span>
+                                <span>Renewable energy solutions (e.g., solar power for irrigation or processing).</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">What is the biggest barrier preventing you from innovating in your business?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="innovation_barrier" value="capital" required>
+                                <span class="radio-custom"></span>
+                                <span>Lack of access to capital to invest in new ideas.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="innovation_barrier" value="knowledge" required>
+                                <span class="radio-custom"></span>
+                                <span>Lack of technical knowledge or expertise.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="innovation_barrier" value="time" required>
+                                <span class="radio-custom"></span>
+                                <span>The day-to-day challenges of the business leave no time for innovation.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="innovation_barrier" value="market_uncertainty" required>
+                                <span class="radio-custom"></span>
+                                <span>Uncertainty about the market demand for new products or services.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="innovation_barrier" value="partners" required>
+                                <span class="radio-custom"></span>
+                                <span>Difficulty finding reliable partners or suppliers for new ventures.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 11: Innovation Models & Support -->
+            <div id="step11" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <div class="question-group">
+                        <label class="question-label">Which innovative business model are you most interested in exploring?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="business_model" value="value_added" required>
+                                <span class="radio-custom"></span>
+                                <span>Developing new value-added products (e.g., turning macadamia nuts into snacks, goat milk into cheese).</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="business_model" value="business_rescue" required>
+                                <span class="radio-custom"></span>
+                                <span>Implementing a "Business Rescue" plan to pivot away from a failing market (e.g., macadamia).</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="business_model" value="social_impact" required>
+                                <span class="radio-custom"></span>
+                                <span>Creating a social impact model (e.g., a revolving goat scheme for community empowerment).</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="business_model" value="advanced_tech" required>
+                                <span class="radio-custom"></span>
+                                <span>Adopting advanced technology like hydroponics, aeroponics etc….</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="business_model" value="training_services" required>
+                                <span class="radio-custom"></span>
+                                <span>Offering training or advisory services to other farmers as a new revenue stream.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">How could YEAN best support your efforts to become more innovative?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="yean_innovation_support" value="experts" required>
+                                <span class="radio-custom"></span>
+                                <span>Connecting me with technical experts and mentors in a specific area of agri-innovation.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_innovation_support" value="exposure_visits" required>
+                                <span class="radio-custom"></span>
+                                <span>Organizing exposure visits to other innovative farms or businesses.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_innovation_support" value="pilot_projects" required>
+                                <span class="radio-custom"></span>
+                                <span>Facilitating pilot projects to test new ideas on a small scale.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="yean_innovation_support" value="coaching" required>
+                                <span class="radio-custom"></span>
+                                <span>Providing coaching on how to develop and test a new agri related business idea.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">Thinking about the long-term sustainability of your business, what is your biggest concern?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="sustainability_concern" value="climate_change" required>
+                                <span class="radio-custom"></span>
+                                <span>The impact of climate change on my production.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sustainability_concern" value="market_changes" required>
+                                <span class="radio-custom"></span>
+                                <span>Changes in market prices and consumer demand.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sustainability_concern" value="succession" required>
+                                <span class="radio-custom"></span>
+                                <span>Ensuring a smooth transition of the business to the next generation or new leadership.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sustainability_concern" value="environment" required>
+                                <span class="radio-custom"></span>
+                                <span>Maintaining soil health and environmental quality.</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="sustainability_concern" value="technology" required>
+                                <span class="radio-custom"></span>
+                                <span>Keeping up with new technologies and competition.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <label class="question-label">If you had no constraints on time or money, what is one bold or innovative idea you would implement in your agri-business in the next year?</label>
+                        <textarea name="innovative_idea" placeholder="Please describe your innovative idea..." rows="4" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 12: Final Feedback -->
+            <div id="step12" class="survey-step" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-comments"></i> Your Feedback</h2>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Could you please share your feedback regarding the online info-session held on Tuesday 19th August.</label>
+                        <textarea name="session_feedback" placeholder="Please share your feedback about the info-session..." rows="4" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons">
+                <button type="button" id="prevBtn" class="nav-btn prev-btn" style="display: none;">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="button" id="nextBtn" class="nav-btn next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" id="submitBtn" class="nav-btn submit-btn" style="display: none;">
+                    <i class="fas fa-paper-plane"></i> Submit Survey
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/survey.js"></script>
+</body>
+</html>
