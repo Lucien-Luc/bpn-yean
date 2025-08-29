@@ -176,22 +176,12 @@ class SurveyApp {
     }
 
     handleCheckboxGroupLimit(group, maxSelections) {
+        // Checkbox limit enforcement disabled - users can select any number
         const checkboxes = group.querySelectorAll('input[type="checkbox"]');
-        const checked = group.querySelectorAll('input[type="checkbox"]:checked');
-        
-        if (checked.length >= maxSelections) {
-            checkboxes.forEach(checkbox => {
-                if (!checkbox.checked) {
-                    checkbox.parentElement.classList.add('disabled');
-                    checkbox.disabled = true;
-                }
-            });
-        } else {
-            checkboxes.forEach(checkbox => {
-                checkbox.parentElement.classList.remove('disabled');
-                checkbox.disabled = false;
-            });
-        }
+        checkboxes.forEach(checkbox => {
+            checkbox.parentElement.classList.remove('disabled');
+            checkbox.disabled = false;
+        });
     }
 
     async showIntroductionPopup() {
