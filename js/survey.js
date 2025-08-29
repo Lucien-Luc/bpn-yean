@@ -200,7 +200,7 @@ class SurveyApp {
         `;
 
         await Swal.fire({
-            title: 'Welcome to the BPN-YEAN Follow Up',
+            title: 'Welcome to the YEAN Follow Up',
             html: introText,
             icon: 'info',
             confirmButtonText: 'Start Survey',
