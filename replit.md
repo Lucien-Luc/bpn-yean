@@ -1,6 +1,6 @@
 # Overview
 
-This is a web-based agriculture survey application developed for the BPN Agriculture Survey in partnership with YEAN & Mastercard Foundation. The application consists of a multi-step survey form for collecting agricultural data and an admin dashboard for monitoring submissions and analytics. The system is built with vanilla JavaScript and uses Firebase Firestore as the backend database for real-time data storage and retrieval.
+This is a web-based agriculture survey application developed for the BPN-YEAN Follow Up in partnership with YEAN & Mastercard Foundation. The application consists of a multi-step survey form for collecting agricultural data and an admin dashboard for monitoring submissions and analytics. The system is built with vanilla JavaScript and uses Firebase Firestore as the backend database for real-time data storage and retrieval.
 
 # User Preferences
 

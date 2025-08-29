@@ -200,7 +200,7 @@ class SurveyApp {
         `;
 
         await Swal.fire({
-            title: 'Welcome to the BPN Agriculture Survey',
+            title: 'Welcome to the BPN-YEAN Follow Up',
             html: introText,
             icon: 'info',
             confirmButtonText: 'Start Survey',
