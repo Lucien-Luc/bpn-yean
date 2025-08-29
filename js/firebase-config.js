@@ -2,14 +2,15 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// Firebase configuration - these will be provided via environment variables
+// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC_example_key_will_be_replaced",
-    authDomain: "project-id.firebaseapp.com",
-    projectId: "project-id",
-    storageBucket: "project-id.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:example"
+    apiKey: "AIzaSyCp1B4T55SHNIzBCO6ogex_fswdPy-RSuo",
+    authDomain: "leave-d67b7.firebaseapp.com",
+    projectId: "leave-d67b7",
+    storageBucket: "leave-d67b7.firebasestorage.app",
+    messagingSenderId: "329360140575",
+    appId: "1:329360140575:web:77f1041f70637f637f282a",
+    measurementId: "G-1H0Y6B5Z2G"
 };
 
 // Initialize Firebase
