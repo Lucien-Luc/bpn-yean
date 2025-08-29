@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f3f4f6; }
+        .debug-container { max-width: 800px; margin: 0 auto; }
+        .test-result { 
+            background: white; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #3b82f6;
+        }
+        .success { border-left-color: #10b981; }
+        .error { border-left-color: #ef4444; background: #fef2f2; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 Firebase Debug Test</h1>
+        
+        <button onclick="testFirebaseConnection()">Test Firebase Connection</button>
+        <button onclick="testReadSubmissions()">Test Read Submissions</button>
+        <button onclick="testReadActivities()">Test Read Activities</button>
+        <button onclick="testWriteData()">Test Write Sample Data</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import { db, COLLECTIONS, checkFirebaseConnection } from './js/firebase-config.js';
+        import { 
+            collection, 
+            getDocs, 
+            addDoc, 
+            serverTimestamp,
+            query,
+            limit 
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+        const results = document.getElementById('results');
+        
+        function addResult(title, status, details = '') {
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `
+                <h3>${title}</h3>
+                <p><strong>Status:</strong> ${status.toUpperCase()}</p>
+                ${details ? `<pre>${details}</pre>` : ''}
+            `;
+            results.appendChild(div);
+        }
+
+        // Test Firebase connection
+        window.testFirebaseConnection = async () => {
+            try {
+                addResult('Firebase Connection Test', 'testing', 'Testing connection...');
+                
+                const connectionTest = await checkFirebaseConnection();
+                addResult('Firebase Connection Test', 'success', 
+                    `Connected successfully!\nProject ID: leave-d67b7\nCollections: ${Object.values(COLLECTIONS).join(', ')}`);
+                
+            } catch (error) {
+                addResult('Firebase Connection Test', 'error', 
+                    `Connection failed: ${error.message}\n\nFull error: ${JSON.stringify(error, null, 2)}`);
+            }
+        };
+
+        // Test reading submissions
+        window.testReadSubmissions = async () => {
+            try {
+                addResult('Read Submissions Test', 'testing', 'Attempting to read submissions...');
+                
+                const submissionsRef = collection(db, COLLECTIONS.SUBMISSIONS);
+                const querySnapshot = await getDocs(query(submissionsRef, limit(5)));
+                
+                const submissions = [];
+                querySnapshot.forEach((doc) => {
+                    submissions.push({
+                        id: doc.id,
+                        data: doc.data()
+                    });
+                });
+                
+                addResult('Read Submissions Test', 'success', 
+                    `Successfully read ${submissions.length} submissions.\n\n` +
+                    `Sample data:\n${JSON.stringify(submissions.slice(0, 2), null, 2)}`);
+                
+            } catch (error) {
+                addResult('Read Submissions Test', 'error', 
+                    `Read failed: ${error.message}\n\nError code: ${error.code}\n\nFull error: ${JSON.stringify(error, null, 2)}`);
+            }
+        };
+
+        // Test reading activities  
+        window.testReadActivities = async () => {
+            try {
+                addResult('Read Activities Test', 'testing', 'Attempting to read activities...');
+                
+                const activitiesRef = collection(db, COLLECTIONS.ACTIVITY);
+                const querySnapshot = await getDocs(query(activitiesRef, limit(5)));
+                
+                const activities = [];
+                querySnapshot.forEach((doc) => {
+                    activities.push({
+                        id: doc.id,
+                        data: doc.data()
+                    });
+                });
+                
+                addResult('Read Activities Test', 'success', 
+                    `Successfully read ${activities.length} activities.\n\n` +
+                    `Sample data:\n${JSON.stringify(activities.slice(0, 2), null, 2)}`);
+                
+            } catch (error) {
+                addResult('Read Activities Test', 'error', 
+                    `Read failed: ${error.message}\n\nError code: ${error.code}\n\nFull error: ${JSON.stringify(error, null, 2)}`);
+            }
+        };
+
+        // Test writing sample data
+        window.testWriteData = async () => {
+            try {
+                addResult('Write Test Data', 'testing', 'Attempting to write sample data...');
+                
+                // Write test activity
+                const testActivity = {
+                    type: 'debug_test',
+                    timestamp: serverTimestamp(),
+                    surveyId: 'debug-test-' + Date.now(),
+                    step: 0,
+                    message: 'Debug test activity'
+                };
+                
+                const activityDoc = await addDoc(collection(db, COLLECTIONS.ACTIVITY), testActivity);
+                
+                // Write test submission
+                const testSubmission = {
+                    surveyId: 'debug-test-' + Date.now(),
+                    interest: 'yes',
+                    financial_proposals: '3',
+                    submittedAt: serverTimestamp(),
+                    completionTime: 300000,
+                    userAgent: 'Debug Test',
+                    debug: true
+                };
+                
+                const submissionDoc = await addDoc(collection(db, COLLECTIONS.SUBMISSIONS), testSubmission);
+                
+                addResult('Write Test Data', 'success', 
+                    `Successfully wrote test data!\nActivity ID: ${activityDoc.id}\nSubmission ID: ${submissionDoc.id}`);
+                
+            } catch (error) {
+                addResult('Write Test Data', 'error', 
+                    `Write failed: ${error.message}\n\nError code: ${error.code}\n\nFull error: ${JSON.stringify(error, null, 2)}`);
+            }
+        };
+
+        window.clearResults = () => {
+            results.innerHTML = '';
+        };
+
+        // Auto-run connection test
+        setTimeout(() => {
+            testFirebaseConnection();
+        }, 1000);
+    </script>
+</body>
+</html>
