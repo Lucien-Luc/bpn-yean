@@ -106,6 +106,13 @@ body {
     color: var(--success-green);
 }
 
+.header-logo {
+    height: 40px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .header-content p {
     color: var(--neutral-gray);
     font-size: 1.1rem;
@@ -965,4 +972,19 @@ input:focus-visible,
 textarea:focus-visible {
     outline: 2px solid var(--primary-blue);
     outline-offset: 2px;
+}
+
+/* Footer */
+.survey-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background: var(--white);
+    border-top: 2px solid var(--accent-blue);
+    color: var(--neutral-gray);
+}
+
+.survey-footer p {
+    font-size: 0.9rem;
+    font-weight: 500;
 }

@@ -541,3 +541,19 @@ body {
 .modal-body::-webkit-scrollbar-thumb:hover {
     background: var(--primary-blue);
 }
+
+/* Footer */
+.admin-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background: var(--white);
+    border-top: 2px solid var(--primary-blue);
+    color: var(--neutral-gray);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-footer p {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
