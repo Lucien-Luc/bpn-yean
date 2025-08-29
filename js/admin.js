@@ -212,8 +212,21 @@ class AdminDashboard {
         
         this.stats.today = this.submissions.filter(submission => {
             if (!submission.submittedAt) return false;
-            const submissionDate = submission.submittedAt.toDate();
-            return submissionDate >= today;
+            
+            try {
+                // Handle both Firestore Timestamp and regular Date objects
+                const submissionDate = submission.submittedAt.toDate ? 
+                    submission.submittedAt.toDate() : 
+                    new Date(submission.submittedAt);
+                
+                // Check if the date is valid
+                if (isNaN(submissionDate.getTime())) return false;
+                
+                return submissionDate >= today;
+            } catch (error) {
+                console.warn('Invalid timestamp in submission:', submission.id, error);
+                return false;
+            }
         }).length;
         
         // Calculate completion rate (assuming some started but didn't finish)
@@ -374,7 +387,7 @@ class AdminDashboard {
     createMarketChart() {
         const ctx = document.getElementById('marketChart').getContext('2d');
         return new Chart(ctx, {
-            type: 'horizontalBar',
+            type: 'bar',
             data: {
                 labels: ['Connections', 'Quality/Volume', 'Transport Cost', 'Competition', 'Branding'],
                 datasets: [{
@@ -390,6 +403,7 @@ class AdminDashboard {
                 }]
             },
             options: {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
@@ -439,9 +453,23 @@ class AdminDashboard {
             nextDate.setDate(nextDate.getDate() + 1);
             
             const daySubmissions = this.submissions.filter(submission => {
+                // Handle missing or invalid submittedAt timestamps
                 if (!submission.submittedAt) return false;
-                const submissionDate = submission.submittedAt.toDate();
-                return submissionDate >= date && submissionDate < nextDate;
+                
+                try {
+                    // Handle both Firestore Timestamp and regular Date objects
+                    const submissionDate = submission.submittedAt.toDate ? 
+                        submission.submittedAt.toDate() : 
+                        new Date(submission.submittedAt);
+                    
+                    // Check if the date is valid
+                    if (isNaN(submissionDate.getTime())) return false;
+                    
+                    return submissionDate >= date && submissionDate < nextDate;
+                } catch (error) {
+                    console.warn('Invalid timestamp in submission:', submission.id, error);
+                    return false;
+                }
             });
             
             days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
