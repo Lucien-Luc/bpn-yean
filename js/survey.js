@@ -97,6 +97,67 @@ class SurveyApp {
 
     setupValidation() {
         this.initializeCheckboxGroups();
+        this.initializeSliders();
+    }
+
+    initializeSliders() {
+        const sliders = document.querySelectorAll('.scale-slider');
+        
+        sliders.forEach(slider => {
+            const displayId = slider.id + '_display';
+            const display = document.getElementById(displayId);
+            
+            if (display) {
+                // Update display text based on slider type
+                const updateDisplay = (value) => {
+                    if (slider.name.includes('collab_')) {
+                        const labels = ['Not Interested', 'Slightly Interested', 'Neutral', 'Interested', 'Very Interested'];
+                        display.textContent = `Interest: ${value} - ${labels[value - 1]}`;
+                    } else if (slider.name.includes('confidence_')) {
+                        const labels = ['Not Confident', 'Slightly Confident', 'Moderately Confident', 'Confident', 'Very Confident'];
+                        display.textContent = `Confidence: ${value} - ${labels[value - 1]}`;
+                    } else {
+                        const labels = ['Low Priority', 'Below Average', 'Medium Priority', 'Above Average', 'High Priority'];
+                        display.textContent = `Priority: ${value} - ${labels[value - 1]}`;
+                    }
+                };
+                
+                // Initialize display
+                updateDisplay(slider.value);
+                
+                // Show display on hover or interaction
+                slider.addEventListener('mouseenter', () => {
+                    display.classList.add('show');
+                });
+                
+                slider.addEventListener('mouseleave', () => {
+                    if (!slider.matches(':active')) {
+                        display.classList.remove('show');
+                    }
+                });
+                
+                slider.addEventListener('input', (e) => {
+                    updateDisplay(e.target.value);
+                    display.classList.add('show');
+                });
+                
+                slider.addEventListener('change', (e) => {
+                    updateDisplay(e.target.value);
+                    setTimeout(() => {
+                        display.classList.remove('show');
+                    }, 2000);
+                });
+                
+                // Show display when focused
+                slider.addEventListener('focus', () => {
+                    display.classList.add('show');
+                });
+                
+                slider.addEventListener('blur', () => {
+                    display.classList.remove('show');
+                });
+            }
+        });
     }
 
     initializeCheckboxGroups() {
