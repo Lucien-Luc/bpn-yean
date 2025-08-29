@@ -30,41 +30,76 @@ class AdminDashboard {
 
     async init() {
         try {
-            this.initializeElements();
-            this.attachEventListeners();
-            this.setupRealtimeListeners();
-            await this.loadInitialData();
-            this.initializeCharts();
+            console.log('Starting admin dashboard initialization...');
             
-            console.log('Admin dashboard initialized successfully');
+            this.initializeElements();
+            console.log('✅ Elements initialized');
+            
+            this.attachEventListeners();
+            console.log('✅ Event listeners attached');
+            
+            this.setupRealtimeListeners();
+            console.log('✅ Real-time listeners setup');
+            
+            await this.loadInitialData();
+            console.log('✅ Initial data loaded');
+            
+            this.initializeCharts();
+            console.log('✅ Charts initialized');
+            
+            console.log('🎉 Admin dashboard initialized successfully');
         } catch (error) {
-            console.error('Failed to initialize admin dashboard:', error);
-            Utils.showNotification('Failed to load dashboard data', 'error');
+            console.error('❌ Failed to initialize admin dashboard:', error);
+            console.error('Error stack:', error.stack);
+            
+            // Show user-friendly error
+            if (typeof Utils !== 'undefined' && Utils.showNotification) {
+                Utils.showNotification('Failed to load dashboard data: ' + error.message, 'error');
+            } else {
+                alert('Failed to load dashboard data: ' + error.message);
+            }
         }
     }
 
     initializeElements() {
-        // Stats elements
-        this.totalSubmissionsEl = document.getElementById('totalSubmissions');
-        this.todaySubmissionsEl = document.getElementById('todaySubmissions');
-        this.completionRateEl = document.getElementById('completionRate');
-        this.avgTimeEl = document.getElementById('avgTime');
+        console.log('Initializing DOM elements...');
         
-        // Activity elements
-        this.activityFeed = document.getElementById('activityFeed');
-        this.connectionStatus = document.getElementById('connectionStatus');
+        // Critical elements that must exist
+        const requiredElements = [
+            { id: 'totalSubmissions', property: 'totalSubmissionsEl' },
+            { id: 'todaySubmissions', property: 'todaySubmissionsEl' },
+            { id: 'completionRate', property: 'completionRateEl' },
+            { id: 'avgTime', property: 'avgTimeEl' },
+            { id: 'activityFeed', property: 'activityFeed' },
+            { id: 'connectionStatus', property: 'connectionStatus' },
+            { id: 'submissionsTableBody', property: 'submissionsTableBody' },
+            { id: 'detailModal', property: 'detailModal' },
+            { id: 'modalBody', property: 'modalBody' },
+            { id: 'refreshBtn', property: 'refreshBtn' },
+            { id: 'exportBtn', property: 'exportBtn' },
+            { id: 'viewAllBtn', property: 'viewAllBtn' }
+        ];
         
-        // Table elements
-        this.submissionsTableBody = document.getElementById('submissionsTableBody');
+        const missingElements = [];
         
-        // Modal elements
-        this.detailModal = document.getElementById('detailModal');
-        this.modalBody = document.getElementById('modalBody');
+        // Check each required element
+        requiredElements.forEach(({ id, property }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                this[property] = element;
+                console.log(`✅ Found element: #${id}`);
+            } else {
+                missingElements.push(id);
+                console.error(`❌ Missing element: #${id}`);
+            }
+        });
         
-        // Button elements
-        this.refreshBtn = document.getElementById('refreshBtn');
-        this.exportBtn = document.getElementById('exportBtn');
-        this.viewAllBtn = document.getElementById('viewAllBtn');
+        // If any critical elements are missing, throw an error
+        if (missingElements.length > 0) {
+            throw new Error(`Missing critical DOM elements: ${missingElements.join(', ')}. Make sure you're on the admin.html page.`);
+        }
+        
+        console.log('All DOM elements found successfully!');
     }
 
     attachEventListeners() {
