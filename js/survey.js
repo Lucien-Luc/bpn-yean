@@ -117,7 +117,7 @@ class SurveyApp {
                         const labels = ['Not Confident', 'Slightly Confident', 'Moderately Confident', 'Confident', 'Very Confident'];
                         display.textContent = `Confidence: ${value} - ${labels[value - 1]}`;
                     } else {
-                        const labels = ['Low Priority', 'Below Average', 'Medium Priority', 'Above Average', 'High Priority'];
+                        const labels = ['Low Priority', 'Below Average Priority', 'Medium Priority', 'Above Average Priority', 'High Priority'];
                         display.textContent = `Priority: ${value} - ${labels[value - 1]}`;
                     }
                 };
