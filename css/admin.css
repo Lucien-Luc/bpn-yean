@@ -181,18 +181,19 @@ body {
 /* Activity Section */
 .activity-section {
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px 30px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
 .activity-header {
     background: var(--white);
-    padding: 20px 25px;
+    padding: 25px 30px;
     border-radius: 15px 15px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 2px solid var(--accent-blue);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .activity-header h3 {
@@ -221,18 +222,21 @@ body {
     background: var(--white);
     border-radius: 0 0 15px 15px;
     box-shadow: var(--shadow-lg);
-    max-height: 300px;
+    max-height: 350px;
     overflow-y: auto;
     padding: 0;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-top: none;
 }
 
 .activity-item {
-    padding: 15px 25px;
-    border-bottom: 1px solid var(--light-gray);
+    padding: 18px 30px;
+    border-bottom: 1px solid rgba(243, 244, 246, 0.8);
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 18px;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .activity-item:hover {
@@ -251,31 +255,39 @@ body {
 }
 
 .activity-item.new {
-    background: rgba(16, 185, 129, 0.1);
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
     border-left: 4px solid var(--success-green);
+    animation: newItemGlow 3s ease-out;
+}
+
+@keyframes newItemGlow {
+    0% { background: rgba(16, 185, 129, 0.3); }
+    100% { background: rgba(16, 185, 129, 0.1); }
 }
 
 .activity-item.placeholder {
     color: var(--neutral-gray);
     font-style: italic;
     justify-content: center;
+    background: rgba(243, 244, 246, 0.5);
 }
 
 /* Submissions Section */
 .submissions-section {
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px 30px;
+    margin: 40px auto;
+    padding: 0 20px 40px;
 }
 
 .submissions-header {
     background: var(--white);
-    padding: 20px 25px;
+    padding: 25px 30px;
     border-radius: 15px 15px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 2px solid var(--accent-blue);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .submissions-header h3 {
@@ -297,52 +309,68 @@ body {
     border-radius: 0 0 15px 15px;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-top: none;
 }
 
 .submissions-table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.95rem;
 }
 
 .submissions-table th {
-    background: var(--accent-blue);
+    background: linear-gradient(135deg, var(--accent-blue), rgba(219, 234, 254, 0.8));
     color: var(--primary-blue);
-    padding: 15px;
+    padding: 18px 20px;
     text-align: left;
     font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     border-bottom: 2px solid var(--primary-blue);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .submissions-table td {
-    padding: 15px;
-    border-bottom: 1px solid var(--light-gray);
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(243, 244, 246, 0.8);
     vertical-align: middle;
+    transition: all 0.3s ease;
 }
 
 .submissions-table tr:hover {
-    background: rgba(219, 234, 254, 0.3);
+    background: linear-gradient(90deg, rgba(219, 234, 254, 0.4), rgba(219, 234, 254, 0.2));
+    transform: scale(1.01);
 }
 
 .submissions-table .no-data {
     text-align: center;
     color: var(--neutral-gray);
     font-style: italic;
-    padding: 40px;
+    padding: 50px;
+    background: rgba(243, 244, 246, 0.5);
 }
 
 .view-btn {
-    background: var(--light-blue);
+    background: linear-gradient(135deg, var(--light-blue), var(--secondary-blue));
     color: var(--white);
     border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .view-btn:hover {
-    background: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 /* Modal */
@@ -458,13 +486,19 @@ body {
 
     .activity-header, .submissions-header {
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
         text-align: center;
+        padding: 20px;
     }
 
     .table-actions {
         width: 100%;
         justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .activity-section, .submissions-section {
+        margin: 30px auto;
     }
 
     .submissions-table {
