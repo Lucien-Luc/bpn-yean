@@ -22,10 +22,7 @@ class SurveyApp {
 
     async init() {
         try {
-            // Show introduction popup first
-            await this.showIntroductionPopup();
-            
-            // Initialize UI components
+            // Initialize UI components first
             this.initializeElements();
             this.attachEventListeners();
             this.setupValidation();
@@ -34,13 +31,24 @@ class SurveyApp {
             // Hide loading screen and show survey
             this.hideLoadingScreen();
             
-            // Track survey start
-            await this.trackActivity('survey_started');
+            // Show introduction popup after UI is ready
+            setTimeout(async () => {
+                try {
+                    await this.showIntroductionPopup();
+                    // Track survey start
+                    await this.trackActivity('survey_started');
+                } catch (error) {
+                    console.error('Error with intro popup or tracking:', error);
+                    // Continue anyway - don't block the survey
+                }
+            }, 500);
             
             console.log('Survey application initialized successfully');
         } catch (error) {
             console.error('Failed to initialize survey:', error);
-            Utils.showNotification('Failed to initialize survey. Please refresh the page.', 'error');
+            // Force show survey even if there are errors
+            this.hideLoadingScreen();
+            alert('There was an issue loading some features, but you can still use the survey.');
         }
     }
 
@@ -85,6 +93,10 @@ class SurveyApp {
                 e.returnValue = '';
             }
         });
+    }
+
+    setupValidation() {
+        this.initializeCheckboxGroups();
     }
 
     initializeCheckboxGroups() {
@@ -518,7 +530,37 @@ class SurveyApp {
 
 // Initialize the survey when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SurveyApp();
+    console.log('DOM loaded, initializing survey...');
+    
+    // Failsafe: Hide loading screen after 5 seconds maximum
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        const surveyContainer = document.getElementById('surveyContainer');
+        
+        if (loadingScreen && loadingScreen.style.display !== 'none') {
+            console.log('Failsafe: Forcing loading screen to hide');
+            loadingScreen.style.display = 'none';
+            if (surveyContainer) {
+                surveyContainer.style.display = 'block';
+            }
+        }
+    }, 5000);
+    
+    try {
+        new SurveyApp();
+    } catch (error) {
+        console.error('Error initializing survey app:', error);
+        // Force show survey even if initialization fails
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const surveyContainer = document.getElementById('surveyContainer');
+            
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (surveyContainer) surveyContainer.style.display = 'block';
+            
+            alert('Survey loaded with limited functionality. Some features may not work.');
+        }, 1000);
+    }
 });
 
 // Add CSS for SweetAlert2 wide popup

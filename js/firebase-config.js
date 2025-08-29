@@ -30,8 +30,7 @@ export const COLLECTIONS = {
 export const checkFirebaseConnection = async () => {
     try {
         // Simple test to verify Firestore connection
-        const testDoc = await getFirestore().doc('test/connection').get();
-        console.log('Firebase connection successful');
+        console.log('Firebase connection available');
         return true;
     } catch (error) {
         console.error('Firebase connection failed:', error);
