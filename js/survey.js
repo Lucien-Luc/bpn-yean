@@ -186,64 +186,40 @@ class SurveyApp {
 
     async showIntroductionPopup() {
         const introText = `
-            <div style="text-align: left; line-height: 1.8; font-size: 1.05rem; color: #4a5568; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #dbeafe 0%, #f0f9ff 100%); padding: 25px; border-radius: 16px; margin-bottom: 25px; border-left: 4px solid #3b82f6;">
-                    <p style="margin: 0; font-weight: 500; color: #1e40af;">
-                        <i class="fas fa-handshake" style="margin-right: 10px; color: #3b82f6;"></i>
-                        At BPN, we place entrepreneurs at the centre of everything we do. In partnership with the Mastercard Foundation, we are collaborating with YEAN to provide sector-specific support tailored to your needs.
-                    </p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-                    <p style="margin: 0; color: #475569;">
-                        <i class="fas fa-calendar-alt" style="margin-right: 10px; color: #10b981;"></i>
-                        Following the online info-session held on Tuesday, 19th August, we would like to better understand your individual needs for training and/or technical expertise that YEAN can provide.
-                    </p>
-                </div>
-                
-                <div style="background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b;">
-                    <p style="margin: 0; color: #92400e; font-weight: 500;">
-                        <i class="fas fa-clock" style="margin-right: 10px; color: #f59e0b;"></i>
-                        We kindly ask you to take a few minutes <strong>(approximately 12 minutes)</strong> to complete this short survey. Your input will help us design support that is most relevant and impactful for your business.
-                    </p>
-                </div>
+            <div style="text-align: left; line-height: 1.7; font-size: 1.05rem; color: #374151; max-width: 550px; margin: 0 auto;">
+                <p style="margin-bottom: 24px; color: #1f2937;">
+                    At BPN, we place entrepreneurs at the centre of everything we do. In partnership with the Mastercard Foundation, we are collaborating with YEAN to provide sector-specific support tailored to your needs.
+                </p>
+                <p style="margin-bottom: 24px; color: #374151;">
+                    Following the online info-session held on Tuesday, 19th August, we would like to better understand your individual needs for training and/or technical expertise that YEAN can provide.
+                </p>
+                <p style="margin-bottom: 0; color: #374151;">
+                    We kindly ask you to take a few minutes <strong style="color: #1e40af;">(approximately 12 minutes)</strong> to complete this short survey. Your input will help us design support that is most relevant and impactful for your business.
+                </p>
             </div>
         `;
 
         await Swal.fire({
-            title: '<div style="color: #1e40af; font-weight: 700; font-size: 1.8rem; margin-bottom: 10px;"><i class="fas fa-star" style="color: #fbbf24; margin-right: 12px; animation: pulse 2s infinite;"></i>Welcome to the YEAN Follow Up</div>',
+            title: 'Welcome to the YEAN Follow Up',
             html: introText,
-            confirmButtonText: '<i class="fas fa-rocket" style="margin-right: 8px;"></i>Start Survey',
+            confirmButtonText: 'Start Survey',
             confirmButtonColor: '#1e40af',
             allowOutsideClick: false,
             allowEscapeKey: false,
-            showClass: {
-                popup: 'swal2-noanimation',
-                backdrop: 'swal2-noanimation'
-            },
-            hideClass: {
-                popup: 'swal2-noanimation',
-                backdrop: 'swal2-noanimation'
-            },
             customClass: {
-                popup: 'custom-welcome-popup',
-                confirmButton: 'custom-confirm-btn'
+                popup: 'professional-welcome-popup',
+                confirmButton: 'professional-confirm-btn'
             },
             didOpen: (popup) => {
-                // Add awesome entrance animation
-                popup.style.transform = 'scale(0.3) rotateY(90deg)';
+                // Subtle fade-in animation
                 popup.style.opacity = '0';
-                popup.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                popup.style.transform = 'translateY(-20px)';
+                popup.style.transition = 'all 0.4s ease-out';
                 
                 setTimeout(() => {
-                    popup.style.transform = 'scale(1) rotateY(0deg)';
                     popup.style.opacity = '1';
+                    popup.style.transform = 'translateY(0)';
                 }, 50);
-                
-                // Add floating animation
-                setTimeout(() => {
-                    popup.style.animation = 'welcomeFloat 3s ease-in-out infinite';
-                }, 600);
             }
         });
     }
