@@ -178,99 +178,6 @@ body {
     max-height: 300px;
 }
 
-/* Activity Section */
-.activity-section {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.activity-header {
-    background: var(--white);
-    padding: 25px 30px;
-    border-radius: 15px 15px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--accent-blue);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.activity-header h3 {
-    color: var(--primary-blue);
-    font-size: 1.3rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--success-green);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.status-indicator i {
-    animation: pulse 2s infinite;
-}
-
-.activity-feed {
-    background: var(--white);
-    border-radius: 0 0 15px 15px;
-    box-shadow: var(--shadow-lg);
-    max-height: 350px;
-    overflow-y: auto;
-    padding: 0;
-    border: 1px solid rgba(59, 130, 246, 0.1);
-    border-top: none;
-}
-
-.activity-item {
-    padding: 18px 30px;
-    border-bottom: 1px solid rgba(243, 244, 246, 0.8);
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.activity-item:hover {
-    background: var(--accent-blue);
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.activity-item i {
-    color: var(--primary-blue);
-    font-size: 1.1rem;
-    width: 20px;
-    text-align: center;
-}
-
-.activity-item.new {
-    background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
-    border-left: 4px solid var(--success-green);
-    animation: newItemGlow 3s ease-out;
-}
-
-@keyframes newItemGlow {
-    0% { background: rgba(16, 185, 129, 0.3); }
-    100% { background: rgba(16, 185, 129, 0.1); }
-}
-
-.activity-item.placeholder {
-    color: var(--neutral-gray);
-    font-style: italic;
-    justify-content: center;
-    background: rgba(243, 244, 246, 0.5);
-}
 
 /* Submissions Section */
 .submissions-section {
@@ -484,7 +391,7 @@ body {
         min-width: auto;
     }
 
-    .activity-header, .submissions-header {
+    .submissions-header {
         flex-direction: column;
         gap: 20px;
         text-align: center;
@@ -497,7 +404,7 @@ body {
         flex-wrap: wrap;
     }
 
-    .activity-section, .submissions-section {
+    .submissions-section {
         margin: 30px auto;
     }
 

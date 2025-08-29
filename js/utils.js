@@ -236,9 +236,17 @@ export class Utils {
 
     // Get friendly option values
     static getFriendlyOptionValue(fieldName, value) {
-        // Handle array values (checkboxes)
+        // Handle array values (checkboxes) - remove duplicates and clean up
         if (Array.isArray(value)) {
-            return value.join(', ');
+            // Remove duplicates and empty values
+            const cleanArray = [...new Set(value.filter(v => v && v.trim() !== ''))];
+            
+            // Limit to reasonable display length for table
+            if (cleanArray.length > 3) {
+                return cleanArray.slice(0, 3).join(', ') + ` (+${cleanArray.length - 3} more)`;
+            }
+            
+            return cleanArray.join(', ') || 'N/A';
         }
 
         // Handle scale values
@@ -258,12 +266,39 @@ export class Utils {
             return value;
         }
 
+        // Handle specific field mappings
+        const fieldMappings = {
+            'interest': {
+                'yes': 'Yes',
+                'no': 'No', 
+                'not_sure': 'Not sure yet'
+            },
+            'market_obstacle': {
+                'connections': 'Lack of connections',
+                'quality_volume': 'Quality/Volume requirements',
+                'transport_cost': 'High transport costs',
+                'competition': 'Competition',
+                'branding': 'Branding/Marketing'
+            },
+            'innovation_barrier': {
+                'capital': 'Limited Capital',
+                'technical_knowledge': 'Technical Knowledge',
+                'market_access': 'Market Access',
+                'regulatory': 'Regulatory Issues'
+            }
+        };
+
+        // Apply field-specific mapping
+        if (fieldMappings[fieldName] && fieldMappings[fieldName][value]) {
+            return fieldMappings[fieldName][value];
+        }
+
         // Convert snake_case to readable format
         if (typeof value === 'string') {
             return value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
 
-        return value;
+        return value || 'N/A';
     }
 }
 

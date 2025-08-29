@@ -70,8 +70,6 @@ class AdminDashboard {
             { id: 'todaySubmissions', property: 'todaySubmissionsEl' },
             { id: 'completionRate', property: 'completionRateEl' },
             { id: 'avgTime', property: 'avgTimeEl' },
-            { id: 'activityFeed', property: 'activityFeed' },
-            { id: 'connectionStatus', property: 'connectionStatus' },
             { id: 'submissionsTableBody', property: 'submissionsTableBody' },
             { id: 'detailModal', property: 'detailModal' },
             { id: 'modalBody', property: 'modalBody' },
@@ -150,38 +148,15 @@ class AdminDashboard {
             this.updateSubmissionsTable();
             this.updateCharts();
             
-            // Handle new submissions
+            // Handle new submissions - just log to console
             changes.forEach((change) => {
                 if (change.type === 'added') {
-                    this.addActivityFeedItem('New submission received', 'success', change.doc.data());
+                    console.log('New submission received:', change.doc.data());
                 }
             });
         });
         
-        // Listen to activities
-        const activitiesQuery = query(
-            collection(db, COLLECTIONS.ACTIVITY),
-            orderBy('timestamp', 'desc'),
-            limit(20)
-        );
-        
-        const unsubscribeActivities = onSnapshot(activitiesQuery, (snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const activity = change.doc.data();
-                    this.addActivityFeedItem(
-                        this.getActivityMessage(activity),
-                        this.getActivityType(activity.type),
-                        activity
-                    );
-                }
-            });
-        });
-        
-        this.unsubscribeCallbacks.push(unsubscribeSubmissions, unsubscribeActivities);
-        
-        // Update connection status
-        this.updateConnectionStatus(true);
+        this.unsubscribeCallbacks.push(unsubscribeSubmissions);
     }
 
     async loadInitialData() {
@@ -264,24 +239,28 @@ class AdminDashboard {
         
         const recentSubmissions = this.submissions.slice(0, 10);
         
-        this.submissionsTableBody.innerHTML = recentSubmissions.map(submission => `
-            <tr>
-                <td>${Utils.formatTimestamp(submission.submittedAt)}</td>
-                <td>${Utils.getFriendlyOptionValue('interest', submission.interest || 'N/A')}</td>
-                <td>${Utils.getFriendlyOptionValue('market_obstacle', submission.market_obstacle || 'N/A')}</td>
-                <td>${Utils.getFriendlyOptionValue('innovation_barrier', submission.innovation_barrier || 'N/A')}</td>
-                <td>${Utils.formatDuration(submission.completionTime)}</td>
-                <td>
-                    <button class="view-btn" onclick="adminDashboard.viewSubmission('${submission.id}')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        this.submissionsTableBody.innerHTML = recentSubmissions.map(submission => {
+            // Clean and process data for display
+            const cleanSubmission = this.cleanSubmissionData(submission);
+            
+            return `
+                <tr>
+                    <td>${Utils.formatTimestamp(cleanSubmission.submittedAt)}</td>
+                    <td>${Utils.getFriendlyOptionValue('interest', cleanSubmission.interest)}</td>
+                    <td>${Utils.getFriendlyOptionValue('market_obstacle', cleanSubmission.market_obstacle)}</td>
+                    <td>${Utils.getFriendlyOptionValue('innovation_barrier', cleanSubmission.innovation_barrier)}</td>
+                    <td>${Utils.formatDuration(cleanSubmission.completionTime)}</td>
+                    <td>
+                        <button class="view-btn" onclick="adminDashboard.viewSubmission('${submission.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     initializeCharts() {
-        this.charts.daily = this.createDailyChart();
         this.charts.interest = this.createInterestChart();
         this.charts.training = this.createTrainingChart();
         this.charts.market = this.createMarketChart();
@@ -289,40 +268,6 @@ class AdminDashboard {
         this.updateCharts();
     }
 
-    createDailyChart() {
-        const ctx = document.getElementById('dailyChart').getContext('2d');
-        return new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Submissions',
-                    data: [],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
 
     createInterestChart() {
         const ctx = document.getElementById('interestChart').getContext('2d');
@@ -426,9 +371,6 @@ class AdminDashboard {
     updateCharts() {
         if (this.submissions.length === 0) return;
         
-        // Update daily chart
-        this.updateDailyChart();
-        
         // Update interest chart
         this.updateInterestChart();
         
@@ -439,47 +381,6 @@ class AdminDashboard {
         this.updateMarketChart();
     }
 
-    updateDailyChart() {
-        // Get last 7 days
-        const days = [];
-        const counts = [];
-        
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            date.setHours(0, 0, 0, 0);
-            
-            const nextDate = new Date(date);
-            nextDate.setDate(nextDate.getDate() + 1);
-            
-            const daySubmissions = this.submissions.filter(submission => {
-                // Handle missing or invalid submittedAt timestamps
-                if (!submission.submittedAt) return false;
-                
-                try {
-                    // Handle both Firestore Timestamp and regular Date objects
-                    const submissionDate = submission.submittedAt.toDate ? 
-                        submission.submittedAt.toDate() : 
-                        new Date(submission.submittedAt);
-                    
-                    // Check if the date is valid
-                    if (isNaN(submissionDate.getTime())) return false;
-                    
-                    return submissionDate >= date && submissionDate < nextDate;
-                } catch (error) {
-                    console.warn('Invalid timestamp in submission:', submission.id, error);
-                    return false;
-                }
-            });
-            
-            days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-            counts.push(daySubmissions.length);
-        }
-        
-        this.charts.daily.data.labels = days;
-        this.charts.daily.data.datasets[0].data = counts;
-        this.charts.daily.update();
-    }
 
     updateInterestChart() {
         const interestCounts = { yes: 0, no: 0, not_sure: 0 };
@@ -523,83 +424,27 @@ class AdminDashboard {
         this.charts.market.update();
     }
 
-    addActivityFeedItem(message, type = 'info', data = null) {
-        // Remove placeholder if exists
-        const placeholder = this.activityFeed.querySelector('.placeholder');
-        if (placeholder) {
-            placeholder.remove();
-        }
-        
-        const activityItem = document.createElement('div');
-        activityItem.className = `activity-item ${type === 'success' ? 'new' : ''}`;
-        
-        const icon = this.getActivityIcon(type);
-        const timestamp = new Date().toLocaleTimeString();
-        
-        activityItem.innerHTML = `
-            <i class="${icon}"></i>
-            <span>${message}</span>
-            <small style="margin-left: auto; color: #6b7280;">${timestamp}</small>
-        `;
-        
-        // Add to top of feed
-        this.activityFeed.insertBefore(activityItem, this.activityFeed.firstChild);
-        
-        // Remove old items (keep max 20)
-        const items = this.activityFeed.querySelectorAll('.activity-item');
-        if (items.length > 20) {
-            items[items.length - 1].remove();
-        }
-        
-        // Auto-remove 'new' class after 5 seconds
-        if (type === 'success') {
-            setTimeout(() => {
-                activityItem.classList.remove('new');
-            }, 5000);
-        }
-    }
 
-    getActivityMessage(activity) {
-        const messages = {
-            'survey_started': 'User started survey',
-            'step_completed': `User completed step ${activity.step}`,
-            'survey_completed': 'User completed survey',
-            'survey_abandoned': 'User abandoned survey'
-        };
+    // Clean submission data by removing duplicates and formatting properly
+    cleanSubmissionData(submission) {
+        const cleaned = { ...submission };
         
-        return messages[activity.type] || `Unknown activity: ${activity.type}`;
-    }
-
-    getActivityType(activityType) {
-        const typeMap = {
-            'survey_started': 'info',
-            'step_completed': 'info',
-            'survey_completed': 'success',
-            'survey_abandoned': 'warning'
-        };
+        // Process each field to remove duplicates and clean data
+        Object.keys(cleaned).forEach(key => {
+            const value = cleaned[key];
+            
+            // Handle arrays - remove duplicates
+            if (Array.isArray(value)) {
+                cleaned[key] = [...new Set(value.filter(v => v && v.trim() !== ''))];
+            }
+            
+            // Handle empty or undefined values
+            if (value === undefined || value === null || value === '') {
+                cleaned[key] = 'N/A';
+            }
+        });
         
-        return typeMap[activityType] || 'info';
-    }
-
-    getActivityIcon(type) {
-        const icons = {
-            'info': 'fas fa-info-circle',
-            'success': 'fas fa-check-circle',
-            'warning': 'fas fa-exclamation-triangle',
-            'error': 'fas fa-times-circle'
-        };
-        
-        return icons[type] || 'fas fa-info-circle';
-    }
-
-    updateConnectionStatus(connected) {
-        const statusText = connected ? 'Connected' : 'Disconnected';
-        const statusClass = connected ? 'status-connected' : 'status-disconnected';
-        
-        this.connectionStatus.innerHTML = `
-            <i class="fas fa-circle"></i> ${statusText}
-        `;
-        this.connectionStatus.className = `status-indicator ${statusClass}`;
+        return cleaned;
     }
 
     viewSubmission(submissionId) {
