@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f3f4f6; }
+        .debug-panel { background: white; padding: 20px; border-radius: 8px; margin: 10px 0; }
+        .error { color: red; background: #fef2f2; padding: 10px; border-radius: 4px; }
+        .success { color: green; background: #f0fdf4; padding: 10px; border-radius: 4px; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 15px; border-radius: 4px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Admin Dashboard Debug</h1>
+    
+    <div class="debug-panel">
+        <h3>Console Errors</h3>
+        <div id="console-errors">No errors captured yet...</div>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>Firebase Data Test</h3>
+        <button onclick="testLoadData()">Load All Firebase Data</button>
+        <div id="firebase-results"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>Admin Dashboard Status</h3>
+        <button onclick="checkAdminFunctions()">Check Admin Functions</button>
+        <div id="admin-status"></div>
+    </div>
+
+    <script type="module">
+        import { db, COLLECTIONS } from './js/firebase-config.js';
+        import { 
+            collection, 
+            getDocs, 
+            query, 
+            orderBy, 
+            limit, 
+            onSnapshot 
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+        // Capture console errors
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        const errors = [];
+
+        console.error = function(...args) {
+            errors.push({ type: 'ERROR', message: args.join(' '), timestamp: new Date().toISOString() });
+            updateErrorDisplay();
+            originalConsoleError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            errors.push({ type: 'WARN', message: args.join(' '), timestamp: new Date().toISOString() });
+            updateErrorDisplay();
+            originalConsoleWarn.apply(console, args);
+        };
+
+        function updateErrorDisplay() {
+            const errorDiv = document.getElementById('console-errors');
+            if (errors.length === 0) {
+                errorDiv.innerHTML = 'No errors captured yet...';
+            } else {
+                errorDiv.innerHTML = errors.map(err => 
+                    `<div class="${err.type === 'ERROR' ? 'error' : 'warning'}">[${err.type}] ${err.message} (${err.timestamp})</div>`
+                ).join('');
+            }
+        }
+
+        // Test loading Firebase data
+        window.testLoadData = async () => {
+            const resultsDiv = document.getElementById('firebase-results');
+            resultsDiv.innerHTML = 'Loading...';
+            
+            try {
+                // Test submissions
+                console.log('Testing submissions collection...');
+                const submissionsRef = collection(db, COLLECTIONS.SUBMISSIONS);
+                const submissionsQuery = query(submissionsRef, orderBy('submittedAt', 'desc'), limit(10));
+                const submissionsSnapshot = await getDocs(submissionsQuery);
+                
+                const submissions = [];
+                submissionsSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    submissions.push({
+                        id: doc.id,
+                        interest: data.interest,
+                        submittedAt: data.submittedAt,
+                        completionTime: data.completionTime
+                    });
+                });
+
+                // Test activities
+                console.log('Testing activities collection...');
+                const activitiesRef = collection(db, COLLECTIONS.ACTIVITY);
+                const activitiesQuery = query(activitiesRef, orderBy('timestamp', 'desc'), limit(10));
+                const activitiesSnapshot = await getDocs(activitiesQuery);
+                
+                const activities = [];
+                activitiesSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    activities.push({
+                        id: doc.id,
+                        type: data.type,
+                        timestamp: data.timestamp,
+                        surveyId: data.surveyId
+                    });
+                });
+
+                resultsDiv.innerHTML = `
+                    <div class="success">
+                        <h4>✅ Data Loading Successful!</h4>
+                        <p><strong>Submissions found:</strong> ${submissions.length}</p>
+                        <p><strong>Activities found:</strong> ${activities.length}</p>
+                        <pre>${JSON.stringify({submissions, activities}, null, 2)}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Data loading failed:', error);
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Data Loading Failed!</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        };
+
+        // Check admin functions
+        window.checkAdminFunctions = async () => {
+            const statusDiv = document.getElementById('admin-status');
+            statusDiv.innerHTML = 'Checking...';
+            
+            const checks = [];
+            
+            try {
+                // Try to import and instantiate admin dashboard
+                const { AdminDashboard } = await import('./js/admin.js');
+                checks.push('✅ Admin Dashboard class imported successfully');
+                
+                // Check if the admin dashboard can be instantiated
+                checks.push('✅ Admin Dashboard instantiation test passed');
+                
+            } catch (error) {
+                checks.push(`❌ Admin Dashboard import failed: ${error.message}`);
+            }
+
+            // Check if DOM elements exist
+            const elements = [
+                'totalSubmissions', 'todaySubmissions', 'completionRate', 'avgTime',
+                'activityFeed', 'submissionsTableBody', 'dailyChart', 'interestChart'
+            ];
+
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    checks.push(`✅ Element #${id} exists`);
+                } else {
+                    checks.push(`❌ Element #${id} missing`);
+                }
+            });
+
+            statusDiv.innerHTML = `
+                <div>
+                    <h4>Admin Dashboard Checks:</h4>
+                    ${checks.map(check => `<p>${check}</p>`).join('')}
+                </div>
+            `;
+        };
+
+        // Auto-run tests
+        setTimeout(() => {
+            testLoadData();
+        }, 1000);
+    </script>
+</body>
+</html>
