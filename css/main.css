@@ -217,12 +217,13 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
-    padding: 40px;
-    margin-bottom: 30px;
+    padding: 35px;
+    margin-bottom: 35px;
     box-shadow: var(--shadow-xl);
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
+    border-left: 6px solid var(--secondary-blue);
 }
 
 .question-card::before {
@@ -237,59 +238,119 @@ body {
 
 .question-card h2 {
     color: var(--primary-blue);
-    font-size: 1.8rem;
+    font-size: 1.9rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.question-card h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
 }
 
 .section-description {
     color: var(--neutral-gray);
-    font-size: 1rem;
-    margin-bottom: 30px;
+    font-size: 1.05rem;
+    margin-bottom: 35px;
     font-style: italic;
-    line-height: 1.7;
+    line-height: 1.8;
+    background: rgba(219, 234, 254, 0.3);
+    padding: 18px 25px;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent-blue);
+    position: relative;
+}
+
+.section-description::before {
+    content: '📝';
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    font-size: 1.2rem;
+    opacity: 0.6;
 }
 
 /* Question Groups */
 .question-group {
-    margin-bottom: 35px;
+    margin-bottom: 45px;
+    position: relative;
 }
 
 .question-group:last-child {
     margin-bottom: 0;
 }
 
+.question-group::after {
+    content: '';
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+}
+
+.question-group:last-child::after {
+    display: none;
+}
+
 .question-label {
     display: block;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 700;
     color: var(--dark-gray);
-    margin-bottom: 20px;
-    line-height: 1.6;
+    margin-bottom: 25px;
+    line-height: 1.7;
+    position: relative;
+    padding-left: 30px;
+}
+
+.question-label::before {
+    content: '❓';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.2rem;
+    color: var(--secondary-blue);
 }
 
 /* Radio Button Styles */
 .radio-group {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    background: rgba(248, 250, 252, 0.4);
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(219, 234, 254, 0.4);
 }
 
 .radio-option {
     display: flex;
     align-items: flex-start;
-    gap: 15px;
-    padding: 18px;
-    background: rgba(255, 255, 255, 0.8);
-    border: 2px solid transparent;
-    border-radius: 12px;
+    gap: 18px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(219, 234, 254, 0.6);
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
 }
 
 .radio-option::before {
@@ -353,28 +414,45 @@ body {
 
 .radio-option input[type="radio"]:checked ~ span {
     color: var(--primary-blue);
-    font-weight: 600;
+    font-weight: 700;
+    position: relative;
+}
+
+.radio-option input[type="radio"]:checked {
+    animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 /* Checkbox Styles */
 .checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    background: rgba(248, 250, 252, 0.4);
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(219, 234, 254, 0.4);
 }
 
 .checkbox-option {
     display: flex;
     align-items: flex-start;
-    gap: 15px;
-    padding: 18px;
-    background: rgba(255, 255, 255, 0.8);
-    border: 2px solid transparent;
-    border-radius: 12px;
+    gap: 18px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(219, 234, 254, 0.6);
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
 }
 
 .checkbox-option::before {
@@ -437,7 +515,12 @@ body {
 
 .checkbox-option input[type="checkbox"]:checked ~ span {
     color: var(--primary-blue);
-    font-weight: 600;
+    font-weight: 700;
+    position: relative;
+}
+
+.checkbox-option input[type="checkbox"]:checked {
+    animation: pulse 0.3s ease-in-out;
 }
 
 .checkbox-option.disabled {
@@ -449,15 +532,22 @@ body {
 .scale-questions {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 30px;
+    background: rgba(248, 250, 252, 0.6);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid rgba(219, 234, 254, 0.5);
 }
 
 .scale-question {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    padding: 25px;
-    border: 1px solid rgba(219, 234, 254, 0.5);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    padding: 28px;
+    border: 2px solid rgba(219, 234, 254, 0.7);
+    border-left: 5px solid var(--light-blue);
     transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 12px;
 }
 
 .scale-question:hover {
@@ -467,10 +557,21 @@ body {
 
 .scale-label {
     display: block;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--dark-gray);
-    margin-bottom: 20px;
-    line-height: 1.5;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 30px;
+    font-size: 1.05rem;
+}
+
+.scale-label::before {
+    content: '📊';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.1rem;
 }
 
 .scale-slider-container {
@@ -576,19 +677,22 @@ body {
 
 .slider-value-display {
     position: absolute;
-    top: -35px;
+    top: -42px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--primary-blue);
     color: var(--white);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
     opacity: 0;
     transition: all 0.3s ease;
     pointer-events: none;
     white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--white);
+    z-index: 5;
 }
 
 .slider-value-display.show {
@@ -610,16 +714,18 @@ body {
 /* Textarea Styles */
 textarea {
     width: 100%;
-    min-height: 120px;
-    padding: 20px;
-    border: 2px solid var(--accent-blue);
-    border-radius: 12px;
+    min-height: 130px;
+    padding: 22px;
+    border: 2px solid rgba(219, 234, 254, 0.7);
+    border-radius: 14px;
     font-family: inherit;
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 1.05rem;
+    line-height: 1.7;
     resize: vertical;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--accent-blue);
 }
 
 textarea:focus {
