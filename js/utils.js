@@ -54,19 +54,23 @@ export class Utils {
             }
         });
 
-        // Validate checkbox groups with max selections
-        const qualityStandards = formData.quality_standards ? formData.quality_standards.length : 0;
-        if (qualityStandards === 0) {
-            errors.push('Please select at least one quality standard');
-        } else if (qualityStandards > 2) {
-            errors.push('Please select maximum 2 quality standards');
+        // Validate checkbox groups with max selections (only if they exist in form data)
+        if (formData.hasOwnProperty('quality_standards')) {
+            const qualityStandards = formData.quality_standards ? formData.quality_standards.length : 0;
+            if (qualityStandards === 0) {
+                errors.push('Please select at least one quality standard');
+            } else if (qualityStandards > 2) {
+                errors.push('Please select maximum 2 quality standards');
+            }
         }
 
-        const climatePractices = formData.climate_practices ? formData.climate_practices.length : 0;
-        if (climatePractices === 0) {
-            errors.push('Please select at least one climate practice');
-        } else if (climatePractices > 2) {
-            errors.push('Please select maximum 2 climate practices');
+        if (formData.hasOwnProperty('climate_practices')) {
+            const climatePractices = formData.climate_practices ? formData.climate_practices.length : 0;
+            if (climatePractices === 0) {
+                errors.push('Please select at least one climate practice');
+            } else if (climatePractices > 2) {
+                errors.push('Please select maximum 2 climate practices');
+            }
         }
 
         return errors;
