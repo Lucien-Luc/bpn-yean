@@ -36,6 +36,7 @@ export class Utils {
     static validateFormData(formData) {
         const errors = [];
         const requiredFields = [
+            'full_name', 'company_name', // Added contact information fields
             'interest', 'financial_proposals', 'cash_flow', 'insurance', 
             'record_keeping', 'cooperative', 'supply_chain', 'leadership_training',
             'market_obstacle', 'collab_marketing', 'collab_purchasing', 'collab_supply_chain',

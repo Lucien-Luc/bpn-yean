@@ -16,7 +16,7 @@ import { Utils, AnimationUtils } from './utils.js';
 class SurveyApp {
     constructor() {
         this.currentStep = 0;
-        this.totalSteps = 13; // Steps 0-12
+        this.totalSteps = 14; // Steps 0-13 (added contact info step)
         this.startTime = Date.now();
         this.formData = {};
         this.surveyId = Utils.generateId();

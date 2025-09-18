@@ -45,8 +45,36 @@
 
         <!-- Survey Form -->
         <form id="surveyForm" class="survey-form">
-            <!-- Initial Interest Question -->
+            <!-- Step 0: Contact Information -->
             <div id="step0" class="survey-step active" data-aos="fade-up">
+                <div class="question-card">
+                    <h2><i class="fas fa-user-circle"></i> Your Information</h2>
+                    <p class="section-description">Let us know who you are so we can follow up with you about opportunities and support.</p>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Full Name *</label>
+                        <input type="text" name="full_name" id="full_name" required placeholder="Enter your full name" class="text-input">
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Company/Organization Name *</label>
+                        <input type="text" name="company_name" id="company_name" required placeholder="Enter your company or organization name" class="text-input">
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Email Address (Optional)</label>
+                        <input type="email" name="email_address" id="email_address" placeholder="Enter your email address" class="text-input">
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Phone Number (Optional)</label>
+                        <input type="tel" name="phone_number" id="phone_number" placeholder="Enter your phone number" class="text-input">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 1: Initial Interest Question -->
+            <div id="step1" class="survey-step" data-aos="fade-up">
                 <div class="question-card">
                     <h2>Your Interest in Agriculture Support</h2>
                     <div class="question-group">
