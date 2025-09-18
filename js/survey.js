@@ -916,7 +916,7 @@ class SurveyApp {
 
             // Redirect to admin dashboard
             setTimeout(() => {
-                window.location.href = '/admin.html';
+                window.location.href = 'admin.html';
             }, 2000);
 
             return true;
