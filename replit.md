@@ -2,6 +2,20 @@
 
 This is a web-based agriculture survey application developed for the YEAN Follow Up in partnership with YEAN & Mastercard Foundation. The application consists of a multi-step survey form for collecting agricultural data and an admin dashboard for monitoring submissions and analytics. The system is built with vanilla JavaScript and uses Firebase Firestore as the backend database for real-time data storage and retrieval.
 
+## Current Status
+✅ **FULLY FUNCTIONAL IN REPLIT ENVIRONMENT**
+- Project imported and configured successfully (September 18, 2025)
+- Static web server running on port 5000 serving all application files
+- Firebase connectivity established and working
+- All frontend dependencies loading correctly via CDN
+- Survey application and admin dashboard both accessible and functional
+
+## Replit Environment Setup
+- **Development Server**: Python HTTP server on port 5000 (0.0.0.0:5000)
+- **Workflow**: "Survey Server" configured to serve static files
+- **No additional dependencies**: All libraries loaded from CDN
+- **Database**: External Firebase Firestore (pre-configured)
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -59,3 +73,41 @@ The admin dashboard provides comprehensive analytics through:
 ## Development Tools
 - **ES6 Modules**: Modern JavaScript module system for code organization
 - **CSS Custom Properties**: For consistent theming and design system implementation
+
+# File Structure
+
+```
+/
+├── index.html              # Main survey application
+├── admin.html             # Admin dashboard
+├── css/
+│   ├── main.css          # Survey application styles
+│   └── admin.css         # Admin dashboard styles
+├── js/
+│   ├── survey.js         # Main survey logic
+│   ├── admin.js          # Admin dashboard functionality
+│   ├── utils.js          # Shared utility functions
+│   └── firebase-config.js # Firebase configuration
+├── attached_assets/       # Images and documents
+│   ├── logo.png
+│   └── [various survey images]
+└── replit.md             # Project documentation
+```
+
+# Development & Deployment
+
+## Local Development
+- Run via the "Survey Server" workflow (Python HTTP server)
+- Accessible at http://localhost:5000 (main survey)
+- Admin dashboard at http://localhost:5000/admin.html
+
+## Production Deployment
+- Static site deployment recommended (autoscale)
+- All dependencies loaded from CDN
+- Firebase handles backend/database requirements
+- No build process required
+
+## Firebase Configuration
+- Project ID: leave-d67b7
+- Collections: survey_submissions, survey_activity, survey_metadata, admin_users
+- Real-time synchronization enabled for admin dashboard
